@@ -1,3 +1,6 @@
+// token.h
+// Version 1.1
+
 #ifndef TOKEN_H
 #define TOKEN_H
 
@@ -10,7 +13,8 @@ typedef enum {
     GETCHAR,
     PUTCHAR,
     START_LOOP,
-    END_LOOP
+    END_LOOP,
+    COMMENT
 } Token;
 
 #endif
