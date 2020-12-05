@@ -1,15 +1,14 @@
 // lexer.c
-// Version 1.0
+// Version 1.1
 
 #include <stddef.h>
-#include <stdio.h>
 
 #include "lexer.h"
 
 // private functions declaration
 Token charToToken(char c);
 
-List *parse(char *sourceCode) {
+List *doLexing(char *sourceCode) {
     List *head = initList();
     List *tail = head;
 
