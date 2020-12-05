@@ -1,5 +1,5 @@
 // tree.c
-// Version 1.0
+// Version 1.1
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -31,7 +31,7 @@ Tree *addChild(Tree *node, Token value) {
     newNode->value = value;
 
     // add newNode to the tree children
-    node->children = realloc(node->children, node->nChildren);
+    node->children = realloc(node->children, sizeof(Tree *) * node->nChildren);
     node->children[node->nChildren -1] = newNode;
 
     return newNode;
