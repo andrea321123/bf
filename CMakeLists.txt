@@ -3,4 +3,4 @@ project(bf C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(bf src/main.c)
+add_executable(bf src/main.c src/list.c src/lexer.c)
