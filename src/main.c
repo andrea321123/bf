@@ -1,5 +1,5 @@
 // main.c
-// Version 1.0
+// Version 1.1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@ char *readSourceCode(char *path);
 int main(int argc, char *argv[]) {
     // argv[1] must be path to source code
     if (argc <2) {
-        printf("Specify source code path\n");
+        printf("ERROR: Specify source code path.\n");
         exit(4);
     }
 
@@ -47,7 +47,7 @@ char *readSourceCode(char *path) {
     FILE *file = fopen(path, "r");
 
     if (file == NULL) {
-        printf("Could not open file\n");
+        printf("ERROR: Could not open file\n");
         exit (5);
     }
 
