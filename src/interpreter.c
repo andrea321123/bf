@@ -1,5 +1,5 @@
 // interpreter.c
-// Version 1.0
+// Version 1.1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,6 +11,12 @@ void executeToken(Interpreter *interpreter, Token token);
 
 Interpreter *initInterpreter() {
     Interpreter *interpreter = malloc(sizeof(Interpreter));
+
+    // init memory block
+    for (uint64_t i = 0; i < MEMORY_SIZE; i++) {
+        interpreter->memory[i] = 0;
+    }
+
     interpreter->pointer = 0;
     return interpreter;
 }
