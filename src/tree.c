@@ -1,5 +1,5 @@
 // tree.c
-// Version 1.1
+// Version 1.2
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -11,6 +11,8 @@ Tree *initTree() {
 
     head->nChildren = 0;
     head->children = NULL;
+
+    return head;
 }
 
 void freeTree(Tree *node) {
