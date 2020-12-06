@@ -1,5 +1,5 @@
 // main.c
-// Version 1.1
+// Version 1.2
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,9 +37,6 @@ int main(int argc, char *argv[]) {
     freeTree(tree);
     freeInterpreter(interpreter);
 
-    printf("OPREMENERE");
-    int sas = 0;
-    scanf("%d", &sas);
     return 0;
 }
 
@@ -62,7 +59,6 @@ char *readSourceCode(char *path) {
         if (offset >= allocatedSize) {
             allocatedSize *=2;
             sourceCode = realloc(sourceCode, allocatedSize);
-            printf("%lu\n", allocatedSize);
         }
 
         sourceCode[offset++] = character;
