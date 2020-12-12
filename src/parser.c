@@ -1,8 +1,9 @@
 // parser.c
-// Version 1.0
+// Version 2.0
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "parser.h"
 
@@ -17,8 +18,8 @@ Tree *doParsing(List *list) {
     while (list != NULL) {
         Token token = list->value;
         if (token == END_LOOP) {
-            // should be handled as error
-            exit(0);
+            printf("bf: error: '[' missing\n");
+            exit(1);
         }
         if (token != START_LOOP) {
             addChild(tree, token);
@@ -39,10 +40,12 @@ Tree *doParsing(List *list) {
 // single block and then it is parsed recursively
 // Should return the node with value ']'
 List *doParsingRecursive(Tree *tree, List *list) {
+    // if last instruction was '['
     if (list == NULL) {
-        // should be handled as error
-        exit(1);
+        printf("bf: error: ']' missing\n");
+        exit(2);
     }
+
     while (list->value != END_LOOP) {
         if (list->value != START_LOOP) {
             addChild(tree, list->value);
@@ -59,6 +62,7 @@ List *doParsingRecursive(Tree *tree, List *list) {
         // error handling: reached end of the list (shouldn't happen because
         // we are still nested in at least one loop)
         if (list == NULL) {
+            printf("bf: error: ']' missing\n");
             exit(2);
         }
     }
