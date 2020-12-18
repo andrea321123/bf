@@ -1,5 +1,5 @@
 // lexer.c
-// Version 1.1
+// Version 2.0
 
 #include <stddef.h>
 
@@ -13,13 +13,22 @@ List *doLexing(char *sourceCode) {
     List *tail = head;
 
     char *p = sourceCode;
+    uint64_t lineCounter = 1;
+    
     // we read each character
     while (*p != '\0') {
+        // if it is a '\n' increment counter and continue
+        if (*p == '\n') {
+            lineCounter++;
+            p++;
+            continue;
+        }
+
         Token token = charToToken(*p);
 
         // if it is an instruction, add to the list
         if (token != COMMENT) {
-            tail = addNode(tail, token);
+            tail = addNode(tail, token, lineCounter);
         }
 
         p++;

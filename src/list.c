@@ -1,5 +1,5 @@
 // list.c
-// Version 1.0
+// Version 2.0
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -22,11 +22,12 @@ void freeList(List *node) {
     free(node);
 }
 
-List *addNode(List *node, Token value) {
+List *addNode(List *node, Token value, uint64_t line) {
     // create the new node
     List *newNode;
     newNode = initList();
     newNode->value = value;
+    newNode->line = line;
 
     node->next = newNode;   // connect the new node to the list
     return newNode;

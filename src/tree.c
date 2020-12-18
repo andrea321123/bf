@@ -1,5 +1,5 @@
 // tree.c
-// Version 1.2
+// Version 2.0
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -24,13 +24,14 @@ void freeTree(Tree *node) {
     free(node);
 }
 
-Tree *addChild(Tree *node, Token value) {
+Tree *addChild(Tree *node, Token value, uint64_t line) {
     node->nChildren++;
     
     // create the new node
     Tree *newNode;
     newNode = initTree();
     newNode->value = value;
+    newNode->line = line;
 
     // add newNode to the tree children
     node->children = realloc(node->children, sizeof(Tree *) * node->nChildren);

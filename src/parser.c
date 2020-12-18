@@ -1,5 +1,5 @@
 // parser.c
-// Version 2.0
+// Version 2.1
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -22,11 +22,11 @@ Tree *doParsing(List *list) {
             exit(1);
         }
         if (token != START_LOOP) {
-            addChild(tree, token);
+            addChild(tree, token, list->line);
         }
         else {      // it is a loop
             // we jump to the end of the [] block
-            Tree *loopChild = addChild(tree, token);
+            Tree *loopChild = addChild(tree, token, list->line);
             list = doParsingRecursive(loopChild, list->next);
         }
 
@@ -48,12 +48,12 @@ List *doParsingRecursive(Tree *tree, List *list) {
 
     while (list->value != END_LOOP) {
         if (list->value != START_LOOP) {
-            addChild(tree, list->value);
+            addChild(tree, list->value, list->line);
         }
         else {      // it is a loop
             Token token = list->value;
             // we jump to the end of the [] block
-            Tree *loopChild = addChild(tree, token);
+            Tree *loopChild = addChild(tree, token, list->line);
             list = doParsingRecursive(loopChild, list->next);
         }
 
