@@ -1,5 +1,5 @@
 // main.c
-// Version 2.0
+// Version 2.1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,7 +49,7 @@ char *readSourceCode(char *path) {
     }
 
     char *sourceCode = malloc(100);
-    char character;
+    int8_t character;
     uint64_t allocatedSize = 100;
     uint64_t offset = 0;
 
