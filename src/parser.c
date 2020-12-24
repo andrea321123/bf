@@ -1,5 +1,5 @@
 // parser.c
-// Version 2.1
+// Version 2.2
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -18,7 +18,7 @@ Tree *doParsing(List *list) {
     while (list != NULL) {
         Token token = list->value;
         if (token == END_LOOP) {
-            printf("bf: error: '[' missing\n");
+            printf("bf: error at line %lu: '[' missing\n", list->line);
             exit(1);
         }
         if (token != START_LOOP) {
@@ -27,7 +27,13 @@ Tree *doParsing(List *list) {
         else {      // it is a loop
             // we jump to the end of the [] block
             Tree *loopChild = addChild(tree, token, list->line);
+
+            uint64_t line = list->line;
             list = doParsingRecursive(loopChild, list->next);
+            if (list == NULL) {         // missing ']'
+                printf("bf: error at line %lu: ']' missing\n", line);
+                exit(2);
+            }
         }
 
         list = list->next;      // visit next node
@@ -42,8 +48,7 @@ Tree *doParsing(List *list) {
 List *doParsingRecursive(Tree *tree, List *list) {
     // if last instruction was '['
     if (list == NULL) {
-        printf("bf: error: ']' missing\n");
-        exit(2);
+        return NULL;
     }
 
     while (list->value != END_LOOP) {
@@ -57,12 +62,13 @@ List *doParsingRecursive(Tree *tree, List *list) {
             list = doParsingRecursive(loopChild, list->next);
         }
 
+        uint64_t line = list->line;
         list = list->next;
 
         // error handling: reached end of the list (shouldn't happen because
         // we are still nested in at least one loop)
         if (list == NULL) {
-            printf("bf: error: ']' missing\n");
+            printf("bf: error at line %lu: ']' missing\n", line);
             exit(2);
         }
     }
