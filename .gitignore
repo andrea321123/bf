@@ -50,3 +50,14 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Build directory
+build/
+cmake-build-debug/
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# Brainfuck source files directory
+examples/
