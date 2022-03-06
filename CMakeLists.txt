@@ -10,4 +10,5 @@ add_executable(bf
     src/tree.c
     src/parser.c
     src/interpreter.c
+    src/transpiler.c
 )
