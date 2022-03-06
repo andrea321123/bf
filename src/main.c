@@ -33,12 +33,18 @@ static void showUsageAndExit() {
     puts("bf is an interpreter for the Brainfuck language");
     puts("");
     puts("With no FILE, or when FILE is -, read standard input");
+    puts("");
+    puts("  -r, --run           run bf source program (default behaviour)");
+    puts("  -t, --transpile     transpile bf source to a C source file");
+    puts("");
+    puts("    -h, --help        display this help and exit");
+    puts("    -v, --version     output version information and exit");
 
     exit(0);
 }
 
 static void showVersionAndExit() {
-    puts("bf 1.0");
+    puts("bf 1.1");
     puts("Copyright (C) 2022 bf contributors");
 
     exit(0);
