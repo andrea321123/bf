@@ -63,6 +63,8 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
             transpileRecursive(tree->child, depth +1);
             addLine("}", depth);
             break;
+        default:
+            break;
         }
     
         tree = tree->pair;
