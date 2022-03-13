@@ -22,6 +22,6 @@
 #include "tree.h"
 
 /* Compile the BF program represented by [tree] into a C source file */
-void BFTranspiler_run(struct BFTree *tree);
+void BFTranspiler_run(struct BFTree *tree, int extended1);
 
 #endif 

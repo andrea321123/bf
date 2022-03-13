@@ -25,6 +25,6 @@
  * Each element in the list is a single brainfuck instruction.
  * BFList will be terminated with END instruction.
  */ 
-void BFLexer_run(struct BFList *head, char *sourceCode);
+void BFLexer_run(struct BFList *head, char *sourceCode, int extended1);
 
 #endif

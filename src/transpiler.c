@@ -63,6 +63,35 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
             transpileRecursive(tree->child, depth +1);
             addLine("}", depth);
             break;
+
+        /* Extended Type I instructions */
+        case END_PROGRAM_TOKEN:
+            addLine("exit(0);", depth);
+            break;
+        case MOVE_STORAGE_VALUE_TOKEN:
+            addLine("storage = mem[ptr];", depth);
+            break;
+        case MOVE_VALUE_STORAGE_TOKEN:
+            addLine("mem[ptr] = storage;", depth);
+            break;
+        case RIGHT_SHIFT_TOKEN:
+            addLine("mem[ptr] >>= 1;", depth);
+            break;
+        case LEFT_SHIFT_TOKEN:
+            addLine("mem[ptr] <<= 1;", depth);
+            break;
+        case NOT_TOKEN:
+            addLine("mem[ptr] = ~(mem[ptr]);", depth);
+            break;
+        case XOR_TOKEN:
+            addLine("mem[ptr] ^= storage;", depth);
+            break;
+        case AND_TOKEN:
+            addLine("mem[ptr] &= storage;", depth);
+            break;
+        case OR_TOKEN:
+            addLine("mem[ptr] |= storage;", depth);
+            break;
         default:
             break;
         }
@@ -71,16 +100,19 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
     }
 }
 
-void BFTranspiler_run(struct BFTree *tree) {
+void BFTranspiler_run(struct BFTree *tree, int extended1) {
     addLine("#include <stddef.h>", 0);
     addLine("#include <stdint.h>", 0);
     addLine("#include <stdio.h>", 0);
+    addLine("#include <stdlib.h>", 0);
     addLine("", 0);
     addLine("#define MEM_SIZE 30000", 0);
     addLine("", 0);
     addLine("int main(int argc, char *argv[]) {", 0);
     addLine("int input;", 1);
     addLine("size_t ptr = 0;", 1);
+    if (extended1)
+        addLine("uint8_t storage = 0;", 1);
     addLine("uint8_t mem[MEM_SIZE];", 1);
     addLine("for (size_t i = 0; i < MEM_SIZE; i++)", 1);
     addLine("mem[i] = 0;", 2);

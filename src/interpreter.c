@@ -28,7 +28,10 @@
 
 struct Interpreter {
     uint8_t memory[MEMORY_SIZE];
+    uint8_t storage;    /* Used in Extended Brainfuck */
     size_t ptr;
+
+    int endExecution;   /* Used in Extended Brainfuck */
 };
 
 static void Interpreter_init(struct Interpreter *self) {
@@ -36,6 +39,8 @@ static void Interpreter_init(struct Interpreter *self) {
         self->memory[i] = 0;
     
     self->ptr = 0;
+    self->storage = 0;
+    self->endExecution = 0;
 }
 
 static void Interpreter_free(struct Interpreter *self) {
@@ -87,6 +92,50 @@ static void runNonLoopInstruction(
         else
             interpreter->memory[interpreter->ptr] = 0;
         break;
+    
+    /* Extended Type I instructions */
+    case END_PROGRAM_TOKEN:
+        interpreter->endExecution = 1;
+        break;
+    case MOVE_STORAGE_VALUE_TOKEN:
+        /* Overwrites the byte in storage with the byte at the pointer */
+        interpreter->storage = interpreter->memory[interpreter->ptr];
+        break;
+    case MOVE_VALUE_STORAGE_TOKEN:
+        /* Overwrites the byte at the pointer with the byte in storage */
+        interpreter->memory[interpreter->ptr] = interpreter->storage;
+        break;
+    case RIGHT_SHIFT_TOKEN:
+        /* Performs a single right logical shift of the byte at the pointer */
+        interpreter->memory[interpreter->ptr] >>= 1;
+        break;
+    case LEFT_SHIFT_TOKEN:
+        /* Performs a single left logical shift of the byte at the pointer */
+        interpreter->memory[interpreter->ptr] <<= 1;
+        break;
+    case NOT_TOKEN:
+        /* Performs a bitwise NOT operation on the byte at the pointer */
+        interpreter->memory[interpreter->ptr] =
+            ~(interpreter->memory[interpreter->ptr]);
+        break;
+    case XOR_TOKEN:
+        /* Performs a bitwise XOR operation on the byte at the pointer and the
+         *   byte in storage, storing its result in the byte at the pointer 
+         */
+        interpreter->memory[interpreter->ptr] ^= interpreter->storage;
+        break;
+    case AND_TOKEN:
+        /* Performs a bitwise AND operation on the byte at the pointer and the
+         *   byte in storage, storing its result in the byte at the pointer 
+         */
+        interpreter->memory[interpreter->ptr] &= interpreter->storage;
+        break;
+    case OR_TOKEN:
+        /* Performs a bitwise OR operation on the byte at the pointer and the
+         *   byte in storage, storing its result in the byte at the pointer 
+         */
+        interpreter->memory[interpreter->ptr] |= interpreter->storage;
+        break;
     default:
         break;
     }
@@ -96,7 +145,7 @@ static void runRecursive(
     struct Interpreter *interpreter,
     struct BFTree *tree
 ) {
-    while (tree && tree->value != END_TOKEN) {
+    while (tree && tree->value != END_TOKEN && !(interpreter->endExecution)) {
         if (tree->value != START_LOOP_TOKEN)
             runNonLoopInstruction(interpreter, tree->value);
         else

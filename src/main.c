@@ -36,6 +36,8 @@ static void showUsageAndExit() {
     puts("");
     puts("  -r, --run           run bf source program (default behaviour)");
     puts("  -t, --transpile     transpile bf source to a C source file");
+    puts("  -x,                 allow Extended type I syntax. More info at");
+    puts("                       https://esolangs.org/wiki/Extended_Brainfuck");
     puts("");
     puts("    -h, --help        display this help and exit");
     puts("    -v, --version     output version information and exit");
@@ -62,7 +64,7 @@ static void readSourceCode(FILE *stream, char **str) {
     fread(*str, size, 1, stream);
 }
 
-static void bf(FILE *input, int transpile) {
+static void bf(FILE *input, int transpile, int extended1) {
     /* Pipeline:
      * - Reading input
      * - lexical analysis
@@ -76,7 +78,7 @@ static void bf(FILE *input, int transpile) {
     
     struct BFList *list = malloc(sizeof(struct BFList));
     BFList_init(list, START_TOKEN, 0, 0, START_OPCODE);
-    BFLexer_run(list, sourceCode);
+    BFLexer_run(list, sourceCode, extended1);
     free(sourceCode);
 
     struct BFTree *tree = malloc(sizeof(struct BFTree));
@@ -85,7 +87,7 @@ static void bf(FILE *input, int transpile) {
     BFList_free(list);
 
     if (transpile)
-        BFTranspiler_run(tree);
+        BFTranspiler_run(tree, extended1);
     else
         BFInterpreter_run(tree);
     BFTree_free(tree);
@@ -94,6 +96,7 @@ static void bf(FILE *input, int transpile) {
 int main(int argc, char *argv[]) {
     FILE *input = stdin;
     int transpile = 0;
+    int extended1 = 0;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
@@ -105,6 +108,9 @@ int main(int argc, char *argv[]) {
             transpile = 1;
         else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--run") == 0)
             transpile = 0;
+
+        else if (strcmp(argv[i], "-x") == 0)
+            extended1 = 1;
 
         else if (strcmp(argv[i], "-") != 0) {
             input = fopen(argv[i], "rb");
@@ -118,7 +124,7 @@ int main(int argc, char *argv[]) {
     if (argc == 1)
         showUsageAndExit();
 
-    bf(input, transpile);
+    bf(input, transpile, extended1);
 
     return 0;
 }
