@@ -24,6 +24,7 @@
 #include "transpiler.h"
 #include "tree.h"
 
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,6 +39,7 @@ static void showUsageAndExit() {
     puts("  -t, --transpile     transpile bf source to a C source file");
     puts("  -x,                 allow Extended type I syntax. More info at");
     puts("                       https://esolangs.org/wiki/Extended_Brainfuck");
+    puts("  -m MEMORY           specify the memory array size (default 30000)");
     puts("");
     puts("    -h, --help        display this help and exit");
     puts("    -v, --version     output version information and exit");
@@ -64,7 +66,7 @@ static void readSourceCode(FILE *stream, char **str) {
     fread(*str, size, 1, stream);
 }
 
-static void bf(FILE *input, int transpile, int extended1) {
+static void bf(FILE *input, int transpile, int extended1, size_t memorySize) {
     /* Pipeline:
      * - Reading input
      * - lexical analysis
@@ -87,9 +89,9 @@ static void bf(FILE *input, int transpile, int extended1) {
     BFList_free(list);
 
     if (transpile)
-        BFTranspiler_run(tree, extended1);
+        BFTranspiler_run(tree, extended1, memorySize);
     else
-        BFInterpreter_run(tree);
+        BFInterpreter_run(tree, memorySize);
     BFTree_free(tree);
 }
 
@@ -97,6 +99,7 @@ int main(int argc, char *argv[]) {
     FILE *input = stdin;
     int transpile = 0;
     int extended1 = 0;
+    long memorySize = DEFAULT_MEMORY_SIZE;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
@@ -108,6 +111,19 @@ int main(int argc, char *argv[]) {
             transpile = 1;
         else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--run") == 0)
             transpile = 0;
+
+        else if (strcmp(argv[i], "-m") == 0) {
+            i++;
+            if (i == argc) {
+                fprintf(stderr, "error: memory array size not specified\n");
+                exit(1);
+            }
+            memorySize = strtol(argv[i], NULL, 10);
+            if (!memorySize || memorySize <= 0) {
+                fprintf(stderr, "error: memory size not valid");
+                exit(1);
+            }
+        }
 
         else if (strcmp(argv[i], "-x") == 0)
             extended1 = 1;
@@ -124,7 +140,7 @@ int main(int argc, char *argv[]) {
     if (argc == 1)
         showUsageAndExit();
 
-    bf(input, transpile, extended1);
+    bf(input, transpile, extended1, memorySize);
 
     return 0;
 }

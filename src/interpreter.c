@@ -27,17 +27,18 @@
 #include <stdlib.h>
 
 struct Interpreter {
-    uint8_t memory[MEMORY_SIZE];
+    uint8_t *memory;
     uint8_t storage;    /* Used in Extended Brainfuck */
     size_t ptr;
+    size_t memorySize;
 
     int endExecution;   /* Used in Extended Brainfuck */
 };
 
-static void Interpreter_init(struct Interpreter *self) {
-    for (size_t i = 0; i < MEMORY_SIZE; i++)
-        self->memory[i] = 0;
-    
+static void Interpreter_init(struct Interpreter *self, size_t memorySize) {
+    self->memorySize = memorySize;
+    self->memory = calloc(memorySize, 1);
+
     self->ptr = 0;
     self->storage = 0;
     self->endExecution = 0;
@@ -61,7 +62,7 @@ static void runNonLoopInstruction(
     switch (token) {
     case INC_POINTER_TOKEN:
         interpreter->ptr++;
-        if (interpreter->ptr >= MEMORY_SIZE)
+        if (interpreter->ptr >= interpreter->memorySize)
             outOfBounds();
         break;
     case DEC_POINTER_TOKEN:
@@ -156,9 +157,9 @@ static void runRecursive(
     }
 }
 
-void BFInterpreter_run(struct BFTree *tree) {
+void BFInterpreter_run(struct BFTree *tree, size_t memorySize) {
     struct Interpreter *interpreter = malloc(sizeof(struct Interpreter));
-    Interpreter_init(interpreter);
+    Interpreter_init(interpreter, (size_t)memorySize);
 
     runRecursive(interpreter, tree);
 

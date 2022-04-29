@@ -21,7 +21,9 @@
 
 #include "tree.h"
 
+#include <stddef.h>
+
 /* Run the BF program represented by [tree] */
-void BFInterpreter_run(struct BFTree *tree);
+void BFInterpreter_run(struct BFTree *tree, size_t memorySize);
 
 #endif 

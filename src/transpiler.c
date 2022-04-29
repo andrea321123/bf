@@ -21,6 +21,7 @@
 #include "common.h"
 #include "tree.h"
 
+#include <stddef.h>
 #include <stdio.h>
 
 #define TAB_SIZE 2
@@ -100,13 +101,13 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
     }
 }
 
-void BFTranspiler_run(struct BFTree *tree, int extended1) {
+void BFTranspiler_run(struct BFTree *tree, int extended1, size_t memorySize) {
     addLine("#include <stddef.h>", 0);
     addLine("#include <stdint.h>", 0);
     addLine("#include <stdio.h>", 0);
     addLine("#include <stdlib.h>", 0);
     addLine("", 0);
-    addLine("#define MEM_SIZE 30000", 0);
+    printf("#define MEM_SIZE %zu\n\n", memorySize);
     addLine("", 0);
     addLine("int main(int argc, char *argv[]) {", 0);
     addLine("int input;", 1);

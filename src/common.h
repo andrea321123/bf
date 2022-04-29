@@ -43,7 +43,7 @@
 #define AND_OPCODE '&'
 #define OR_OPCODE '|'
 
-#define MEMORY_SIZE 30000
+#define DEFAULT_MEMORY_SIZE 30000
 
 enum Token {
     START_TOKEN,
