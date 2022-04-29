@@ -45,6 +45,7 @@ static void Interpreter_init(struct Interpreter *self, size_t memorySize) {
 }
 
 static void Interpreter_free(struct Interpreter *self) {
+    free(self->memory);
     free(self);
 }
 
