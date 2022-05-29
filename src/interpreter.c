@@ -104,12 +104,12 @@ static void runRecursive(
     struct BFTree *tree
 ) {
     while (tree && tree->value != END_TOKEN && !(interpreter->endExecution)) {
-        if (tree->value != START_LOOP_TOKEN)
+        if (tree->value != START_LOOP_TOKEN) {
             runNonLoopInstruction(interpreter, tree->value);
-        else
+        } else {
             while (interpreter->memory[interpreter->ptr] != 0)
                 runRecursive(interpreter, tree->child->pair);
-
+        }
         tree = tree->pair;        
     }
 }

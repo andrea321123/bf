@@ -99,17 +99,15 @@ int main(int argc, char *argv[]) {
     long memorySize = DEFAULT_MEMORY_SIZE;
 
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
+        if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
             showUsageAndExit();
-        else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0)
+        } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0) {
             showVersionAndExit();
-        
-        else if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--transpile") == 0)
+        } else if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--transpile") == 0) {
             transpile = 1;
-        else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--run") == 0)
+        } else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--run") == 0) {
             transpile = 0;
-
-        else if (strcmp(argv[i], "-m") == 0) {
+        } else if (strcmp(argv[i], "-m") == 0) {
             i++;
             if (i == argc) {
                 fprintf(stderr, "error: memory array size not specified\n");
@@ -120,9 +118,7 @@ int main(int argc, char *argv[]) {
                 fprintf(stderr, "error: memory size not valid");
                 exit(1);
             }
-        }
-
-        else if (strcmp(argv[i], "-") != 0) {
+        } else if (strcmp(argv[i], "-") != 0) {
             input = fopen(argv[i], "rb");
             if (!input) {
                 fprintf(stderr, "error: file %s not found\n", argv[i]);
@@ -130,9 +126,6 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-
-    if (argc == 1)
-        showUsageAndExit();
 
     bf(input, transpile, memorySize);
 
