@@ -24,6 +24,6 @@
 #include <stddef.h>
 
 /* Compile the BF program represented by [tree] into a C source file */
-void BFTranspiler_run(struct BFTree *tree, int extended1, size_t memorySize);
+void BFTranspiler_run(struct BFTree *tree, size_t memorySize);
 
 #endif 

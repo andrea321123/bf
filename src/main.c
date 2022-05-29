@@ -37,8 +37,6 @@ static void showUsageAndExit() {
     puts("");
     puts("  -r, --run           run bf source program (default behaviour)");
     puts("  -t, --transpile     transpile bf source to a C source file");
-    puts("  -x,                 allow Extended type I syntax. More info at");
-    puts("                       https://esolangs.org/wiki/Extended_Brainfuck");
     puts("  -m MEMORY           specify the memory array size (default 30000)");
     puts("");
     puts("    -h, --help        display this help and exit");
@@ -48,7 +46,7 @@ static void showUsageAndExit() {
 }
 
 static void showVersionAndExit() {
-    puts("bf 1.1");
+    puts("bf 1.0.0");
     puts("Copyright (C) 2022 bf contributors");
 
     exit(0);
@@ -66,7 +64,7 @@ static void readSourceCode(FILE *stream, char **str) {
     fread(*str, size, 1, stream);
 }
 
-static void bf(FILE *input, int transpile, int extended1, size_t memorySize) {
+static void bf(FILE *input, int transpile, size_t memorySize) {
     /* Pipeline:
      * - Reading input
      * - lexical analysis
@@ -80,7 +78,7 @@ static void bf(FILE *input, int transpile, int extended1, size_t memorySize) {
     
     struct BFList *list = malloc(sizeof(struct BFList));
     BFList_init(list, START_TOKEN, 0, 0, START_OPCODE);
-    BFLexer_run(list, sourceCode, extended1);
+    BFLexer_run(list, sourceCode);
     free(sourceCode);
 
     struct BFTree *tree = malloc(sizeof(struct BFTree));
@@ -89,7 +87,7 @@ static void bf(FILE *input, int transpile, int extended1, size_t memorySize) {
     BFList_free(list);
 
     if (transpile)
-        BFTranspiler_run(tree, extended1, memorySize);
+        BFTranspiler_run(tree, memorySize);
     else
         BFInterpreter_run(tree, memorySize);
     BFTree_free(tree);
@@ -98,7 +96,6 @@ static void bf(FILE *input, int transpile, int extended1, size_t memorySize) {
 int main(int argc, char *argv[]) {
     FILE *input = stdin;
     int transpile = 0;
-    int extended1 = 0;
     long memorySize = DEFAULT_MEMORY_SIZE;
 
     for (int i = 1; i < argc; i++) {
@@ -125,9 +122,6 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        else if (strcmp(argv[i], "-x") == 0)
-            extended1 = 1;
-
         else if (strcmp(argv[i], "-") != 0) {
             input = fopen(argv[i], "rb");
             if (!input) {
@@ -140,7 +134,7 @@ int main(int argc, char *argv[]) {
     if (argc == 1)
         showUsageAndExit();
 
-    bf(input, transpile, extended1, memorySize);
+    bf(input, transpile, memorySize);
 
     return 0;
 }

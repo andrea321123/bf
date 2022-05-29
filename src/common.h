@@ -22,7 +22,6 @@
 #define START_OPCODE 'S'
 #define END_OPCODE 'E'
 
-/* Basic opcodes */
 #define INC_POINTER_OPCODE '>'
 #define DEC_POINTER_OPCODE '<'
 #define INC_VALUE_OPCODE '+'
@@ -32,17 +31,6 @@
 #define START_LOOP_OPCODE '['
 #define END_LOOP_OPCODE ']'
 
-/* Extended Type I opcodes */
-#define END_PROGRAM_OPCODE '@'
-#define MOVE_STORAGE_VALUE_OPCODE '$'
-#define MOVE_VALUE_STORAGE_OPCODE '!'
-#define RIGHT_SHIFT_OPCODE '}'
-#define LEFT_SHIFT_OPCODE '{'
-#define NOT_OPCODE '~'
-#define XOR_OPCODE '^'
-#define AND_OPCODE '&'
-#define OR_OPCODE '|'
-
 #define DEFAULT_MEMORY_SIZE 30000
 
 enum Token {
@@ -50,7 +38,6 @@ enum Token {
     END_TOKEN,
     COMMENT_TOKEN,
 
-    /* Basic tokens */
     INC_POINTER_TOKEN,
     DEC_POINTER_TOKEN,
     INC_VALUE_TOKEN,
@@ -59,17 +46,6 @@ enum Token {
     GETCHAR_TOKEN,
     START_LOOP_TOKEN,
     END_LOOP_TOKEN,
-
-    /* Extended Type I tokens */
-    END_PROGRAM_TOKEN,
-    MOVE_STORAGE_VALUE_TOKEN,
-    MOVE_VALUE_STORAGE_TOKEN,
-    RIGHT_SHIFT_TOKEN,
-    LEFT_SHIFT_TOKEN,
-    NOT_TOKEN,
-    XOR_TOKEN,
-    AND_TOKEN,
-    OR_TOKEN
 };
 
 #endif

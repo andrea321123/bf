@@ -25,7 +25,7 @@
 #include <string.h>
 #include <stdio.h>
 
-static enum Token opcodeToToken(char opcode, int extended1) {
+static enum Token opcodeToToken(char opcode) {
     switch (opcode) {
     case INC_POINTER_OPCODE:
         return INC_POINTER_TOKEN;
@@ -43,32 +43,9 @@ static enum Token opcodeToToken(char opcode, int extended1) {
         return START_LOOP_TOKEN;
     case END_LOOP_OPCODE:
         return END_LOOP_TOKEN;
+    default:
+        return COMMENT_TOKEN;
     }
-
-    if (extended1) {
-        switch(opcode) { 
-        case END_PROGRAM_OPCODE:
-            return END_PROGRAM_TOKEN;
-        case MOVE_STORAGE_VALUE_OPCODE:
-            return MOVE_STORAGE_VALUE_TOKEN;
-        case MOVE_VALUE_STORAGE_OPCODE:
-            return MOVE_VALUE_STORAGE_TOKEN;
-        case RIGHT_SHIFT_OPCODE:
-            return RIGHT_SHIFT_TOKEN;
-        case LEFT_SHIFT_OPCODE:
-            return LEFT_SHIFT_TOKEN;
-        case NOT_OPCODE:
-            return NOT_TOKEN;
-        case XOR_OPCODE:
-            return XOR_TOKEN;
-        case AND_OPCODE:
-            return AND_TOKEN;
-        case OR_OPCODE:
-            return OR_TOKEN;
-        }
-    } 
-    
-    return COMMENT_TOKEN;
 }
 
 static void checkValidProgram(struct BFList *list) {
@@ -105,14 +82,14 @@ static void checkValidProgram(struct BFList *list) {
     }
 }
 
-void BFLexer_run(struct BFList *head, char *sourceCode, int extended1) {
+void BFLexer_run(struct BFList *head, char *sourceCode) {
     size_t line = 1;
     size_t column = 1;
     size_t sourceCodeSize = strlen(sourceCode);
     struct BFList *lastNode = head;
 
     for (size_t i = 0; i < sourceCodeSize; i++) {
-        enum Token token = opcodeToToken(sourceCode[i], extended1);
+        enum Token token = opcodeToToken(sourceCode[i]);
         if (token != COMMENT_TOKEN) {
             struct BFList *newNode = malloc(sizeof(struct BFList));
             BFList_init(newNode, token, line, column, sourceCode[i]);
