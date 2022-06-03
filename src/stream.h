@@ -16,16 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LEXER_H
-#define LEXER_H
+#ifndef STREAM_H
+#define STREAM_H
 
-#include "list.h"
-#include "stream.h"
+#include <stddef.h>
 
-/* Create a token list representing the input source code.
- * Each element in the list is a single brainfuck instruction.
- * BFList will be terminated with END instruction.
- */ 
-void BFLexer_run(struct BFList *head, struct BFStream *stream);
+/* Dynamic string implementation */
+struct BFStream {
+    char *str;
+
+    size_t length;
+    size_t capacity;
+    size_t readIndex;
+};
+
+void BFStream_init(struct BFStream *self);
+
+void BFStream_free(struct BFStream *self);
+
+/* Append a character to the [self] string */
+void BFStream_addChar(struct BFStream *self, char c);
+
+/* Return next char in the stream, or EOF is stream is ended */
+char BFStream_nextChar(struct BFStream *self);
 
 #endif

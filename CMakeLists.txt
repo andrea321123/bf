@@ -5,11 +5,12 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS "-Wall -Wextra")
 
 add_executable(bf
-    src/main.c
-    src/list.c
-    src/lexer.c
-    src/tree.c
-    src/parser.c
     src/interpreter.c
+    src/lexer.c
+    src/list.c
+    src/main.c
+    src/parser.c
+    src/stream.c
+    src/tree.c
     src/transpiler.c
 )

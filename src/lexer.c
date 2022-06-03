@@ -20,6 +20,7 @@
 
 #include "common.h"
 #include "list.h"
+#include "stream.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -82,27 +83,29 @@ static void checkValidProgram(struct BFList *list) {
     }
 }
 
-void BFLexer_run(struct BFList *head, char *sourceCode) {
+void BFLexer_run(struct BFList *head, struct BFStream *stream) {
     size_t line = 1;
     size_t column = 1;
-    size_t sourceCodeSize = strlen(sourceCode);
     struct BFList *lastNode = head;
 
-    for (size_t i = 0; i < sourceCodeSize; i++) {
-        enum Token token = opcodeToToken(sourceCode[i]);
+    char c = BFStream_nextChar(stream);
+    while (c != EOF) {
+        enum Token token = opcodeToToken(c);
         if (token != COMMENT_TOKEN) {
             struct BFList *newNode = malloc(sizeof(struct BFList));
-            BFList_init(newNode, token, line, column, sourceCode[i]);
+            BFList_init(newNode, token, line, column, c);
             BFList_addNext(lastNode, newNode); 
             lastNode = newNode;
         }
 
-        if (sourceCode[i] == '\n') {
+        if (c == '\n') {
             column = 1;
             line++;
         } else {
             column++;
         }
+
+        c = BFStream_nextChar(stream);
     }
 
     struct BFList *eofNode = malloc(sizeof(struct BFList));

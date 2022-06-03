@@ -21,6 +21,7 @@
 #include "lexer.h"
 #include "list.h"
 #include "parser.h"
+#include "stream.h"
 #include "transpiler.h"
 #include "tree.h"
 
@@ -52,16 +53,11 @@ static void showVersionAndExit() {
     exit(0);
 }
 
-static void readSourceCode(FILE *stream, char **str) {
-    fseek(stream, 0, SEEK_END);
-    size_t size = (size_t)ftell(stream);
-    fseek(stream, 0, SEEK_SET);
+static void readSourceCode(FILE *file, struct BFStream *stream) {
+    char c;
 
-    if (*str)
-        *str = realloc(*str, sizeof(char) * (size +1));
-    else
-        *str = malloc(sizeof(char) * (size +1));
-    fread(*str, size, 1, stream);
+    while ((c = fgetc(file)) != EOF)
+        BFStream_addChar(stream, c);
 }
 
 static void bf(FILE *input, int transpile, size_t memorySize) {
@@ -71,15 +67,16 @@ static void bf(FILE *input, int transpile, size_t memorySize) {
      * - Parsing
      * - Evaluation / code generation
      */
-    char *sourceCode = NULL;
-    readSourceCode(input, &sourceCode);
+    struct BFStream *stream = malloc(sizeof(struct BFStream));
+    BFStream_init(stream);
+    readSourceCode(input, stream);
     if (input != stdin)
         fclose(input);
     
     struct BFList *list = malloc(sizeof(struct BFList));
     BFList_init(list, START_TOKEN, 0, 0, START_OPCODE);
-    BFLexer_run(list, sourceCode);
-    free(sourceCode);
+    BFLexer_run(list, stream);
+    BFStream_free(stream);
 
     struct BFTree *tree = malloc(sizeof(struct BFTree));
     BFTree_init(tree, START_TOKEN, START_OPCODE);
