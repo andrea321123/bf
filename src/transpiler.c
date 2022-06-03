@@ -38,10 +38,10 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
     while (tree) {
         switch (tree->value) {
         case INC_POINTER_TOKEN:
-            addLine("ptr++;", depth);
+            addLine("ptr = (ptr +1) % MEM_SIZE;", depth);
             break;
         case DEC_POINTER_TOKEN:
-            addLine("ptr--;", depth);
+            addLine("ptr = ptr == 0 ? MEM_SIZE - 1 : ptr - 1;", depth);
             break;
         case INC_VALUE_TOKEN:
             addLine("mem[ptr]++;", depth);
@@ -73,13 +73,16 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
 }
 
 void BFTranspiler_run(struct BFTree *tree, size_t memorySize) {
+    /* Headers and defines */
     addLine("#include <stddef.h>", 0);
     addLine("#include <stdint.h>", 0);
     addLine("#include <stdio.h>", 0);
     addLine("#include <stdlib.h>", 0);
     addLine("", 0);
-    printf("#define MEM_SIZE %zu\n\n", memorySize);
+    printf("#define MEM_SIZE %zu\n", memorySize);
     addLine("", 0);
+
+    /* Main function */
     addLine("int main(int argc, char *argv[]) {", 0);
     addLine("int input;", 1);
     addLine("size_t ptr = 0;", 1);
