@@ -110,9 +110,13 @@ int main(int argc, char *argv[]) {
                 fprintf(stderr, "error: memory array size not specified\n");
                 exit(1);
             }
+            if (strlen(argv[i]) > 10) {
+                fprintf(stderr, "error: memory size not valid\n");
+                exit(1);
+            }
             memorySize = strtol(argv[i], NULL, 10);
             if (!memorySize || memorySize <= 0) {
-                fprintf(stderr, "error: memory size not valid");
+                fprintf(stderr, "error: memory size not valid\n");
                 exit(1);
             }
         } else if (strcmp(argv[i], "-") != 0) {
