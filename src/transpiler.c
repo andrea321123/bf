@@ -83,9 +83,7 @@ void BFTranspiler_run(struct BFTree *tree, size_t memorySize) {
     addLine("int main(int argc, char *argv[]) {", 0);
     addLine("int input;", 1);
     addLine("size_t ptr = 0;", 1);
-    addLine("uint8_t mem[MEM_SIZE];", 1);
-    addLine("for (size_t i = 0; i < MEM_SIZE; i++)", 1);
-    addLine("mem[i] = 0;", 2);
+    addLine("uint8_t *mem = calloc(MEM_SIZE, sizeof(uint8_t));", 1);
     addLine("", 0);
 
     transpileRecursive(tree, 1);
