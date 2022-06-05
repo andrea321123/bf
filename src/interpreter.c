@@ -31,8 +31,6 @@ struct Interpreter {
     uint8_t storage;    /* Used in Extended Brainfuck */
     size_t ptr;
     size_t memorySize;
-
-    int endExecution;   /* Used in Extended Brainfuck */
 };
 
 static void Interpreter_init(struct Interpreter *self, size_t memorySize) {
@@ -41,7 +39,6 @@ static void Interpreter_init(struct Interpreter *self, size_t memorySize) {
 
     self->ptr = 0;
     self->storage = 0;
-    self->endExecution = 0;
 }
 
 static void Interpreter_free(struct Interpreter *self) {
@@ -96,7 +93,7 @@ static void runRecursive(
     struct Interpreter *interpreter,
     struct BFTree *tree
 ) {
-    while (tree && tree->value != END_TOKEN && !(interpreter->endExecution)) {
+    while (tree && tree->value != END_TOKEN) {
         if (tree->value != START_LOOP_TOKEN) {
             runNonLoopInstruction(interpreter, tree->value);
         } else {
