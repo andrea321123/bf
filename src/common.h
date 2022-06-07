@@ -19,6 +19,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <stddef.h>
+
 #define START_OPCODE 'S'
 #define END_OPCODE 'E'
 
@@ -46,6 +48,12 @@ enum Token {
     GETCHAR_TOKEN,
     START_LOOP_TOKEN,
     END_LOOP_TOKEN,
+};
+
+/* Store all possible parameters that can be set by the users */
+struct BFOptions {
+    size_t memorySize;
+    int transpile;
 };
 
 #endif

@@ -60,7 +60,7 @@ static void readSourceCode(FILE *file, struct BFStream *stream) {
         BFStream_addChar(stream, c);
 }
 
-static void bf(FILE *input, int transpile, size_t memorySize) {
+static void bf(FILE *input, struct BFOptions *options) {
     /* Pipeline:
      * - Reading input
      * - lexical analysis
@@ -83,17 +83,19 @@ static void bf(FILE *input, int transpile, size_t memorySize) {
     BFParser_run(tree, list->next);
     BFList_free(list);
 
-    if (transpile)
-        BFTranspiler_run(tree, memorySize);
+    if (options->transpile)
+        BFTranspiler_run(tree, options->memorySize);
     else
-        BFInterpreter_run(tree, memorySize);
+        BFInterpreter_run(tree, options->memorySize);
     BFTree_free(tree);
 }
 
 int main(int argc, char *argv[]) {
     FILE *input = stdin;
-    int transpile = 0;
-    long memorySize = DEFAULT_MEMORY_SIZE;
+
+    struct BFOptions options;
+    options.memorySize = DEFAULT_MEMORY_SIZE;
+    options.transpile = 0;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
@@ -101,9 +103,9 @@ int main(int argc, char *argv[]) {
         } else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0) {
             showVersionAndExit();
         } else if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--transpile") == 0) {
-            transpile = 1;
+            options.transpile = 1;
         } else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--run") == 0) {
-            transpile = 0;
+            options.transpile = 0;
         } else if (strcmp(argv[i], "-m") == 0) {
             i++;
             if (i == argc) {
@@ -114,8 +116,8 @@ int main(int argc, char *argv[]) {
                 fprintf(stderr, "error: memory size not valid\n");
                 exit(1);
             }
-            memorySize = strtol(argv[i], NULL, 10);
-            if (!memorySize || memorySize <= 0) {
+            options.memorySize = strtol(argv[i], NULL, 10);
+            if (!options.memorySize || options.memorySize <= 0) {
                 fprintf(stderr, "error: memory size not valid\n");
                 exit(1);
             }
@@ -128,7 +130,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    bf(input, transpile, memorySize);
+    bf(input, &options);
 
     return 0;
 }
