@@ -38,10 +38,10 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
     while (tree) {
         switch (tree->value) {
         case INC_POINTER_TOKEN:
-            addLine("ptr = (ptr +1) % MEM_SIZE;", depth);
+            addLine("incPtr();", depth);
             break;
         case DEC_POINTER_TOKEN:
-            addLine("ptr = ptr == 0 ? MEM_SIZE - 1 : ptr - 1;", depth);
+            addLine("decPtr();", depth);
             break;
         case INC_VALUE_TOKEN:
             addLine("mem[ptr]++;", depth);
@@ -82,10 +82,34 @@ void BFTranspiler_run(struct BFTree *tree, size_t memorySize) {
     printf("#define MEM_SIZE %zu\n", memorySize);
     addLine("", 0);
 
+    /* Global variables */
+    addLine("int input;", 0);
+    addLine("size_t ptr = 0;", 0);
+    addLine("", 0);
+
+    /* Local functions */
+    addLine("static void outOfBounds() {", 0);
+    addLine("fprintf(stderr, \"error: memory pointer out of bounds\\n\");", 1);
+    addLine("exit(1);", 1);
+    addLine("}", 0);
+    addLine("", 0);
+
+    addLine("static inline void incPtr() {", 0);
+    addLine("if (ptr >= MEM_SIZE)", 1);
+    addLine("outOfBounds();", 2);
+    addLine("ptr++;", 1);
+    addLine("}", 0);
+    addLine("", 0);
+
+    addLine("static inline void decPtr() {", 0);
+    addLine("if (ptr < 1)", 1);
+    addLine("outOfBounds();", 2);
+    addLine("ptr--;", 1);
+    addLine("}", 0);
+    addLine("", 0);
+
     /* Main function */
     addLine("int main(int argc, char *argv[]) {", 0);
-    addLine("int input;", 1);
-    addLine("size_t ptr = 0;", 1);
     addLine("uint8_t *mem = calloc(MEM_SIZE, sizeof(uint8_t));", 1);
     addLine("", 0);
 

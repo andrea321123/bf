@@ -46,6 +46,11 @@ static void Interpreter_free(struct Interpreter *self) {
     free(self);
 }
 
+static void outOfBounds() {
+    fprintf(stderr, "error: memory pointer out of bounds\n");
+    exit(1);
+}
+
 static void runNonLoopInstruction(
     struct Interpreter *interpreter,
     enum Token token
@@ -54,13 +59,14 @@ static void runNonLoopInstruction(
 
     switch (token) {
     case INC_POINTER_TOKEN:
-        interpreter->ptr = (interpreter->ptr +1) % interpreter->memorySize;
+        interpreter->ptr++;
+        if (interpreter->ptr >= interpreter->memorySize)
+            outOfBounds();
         break;
     case DEC_POINTER_TOKEN:
-        if (interpreter->ptr == 0)
-            interpreter->ptr = interpreter->memorySize -1;
-        else
-            interpreter->ptr--;
+        if (interpreter->ptr < 1)
+            outOfBounds();
+        interpreter->ptr--;
         break;
     case INC_VALUE_TOKEN:
         interpreter->memory[interpreter->ptr] = 
