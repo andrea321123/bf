@@ -32,7 +32,7 @@
 
 static void showUsageAndExit() {
     puts("Usage: bf [FILE]");
-    puts("bf is an interpreter for the Brainfuck language");
+    puts("bf is an interpreter for the brainfuck language");
     puts("");
     puts("With no FILE, or when FILE is -, read standard input");
     puts("");
@@ -92,7 +92,6 @@ static void bf(FILE *input, struct BFOptions *options) {
 
 int main(int argc, char *argv[]) {
     FILE *input = stdin;
-    input = fopen("../examples/hanoi.b", "rb");
 
     struct BFOptions options;
     options.memorySize = DEFAULT_MEMORY_SIZE;
