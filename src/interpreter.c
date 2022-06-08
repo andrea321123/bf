@@ -28,7 +28,6 @@
 
 struct Interpreter {
     uint8_t *memory;
-    uint8_t storage;    /* Used in Extended Brainfuck */
     size_t ptr;
     size_t memorySize;
 };
@@ -38,7 +37,6 @@ static void Interpreter_init(struct Interpreter *self, size_t memorySize) {
     self->memory = calloc(memorySize, 1);
 
     self->ptr = 0;
-    self->storage = 0;
 }
 
 static void Interpreter_free(struct Interpreter *self) {
