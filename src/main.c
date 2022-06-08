@@ -79,7 +79,7 @@ static void bf(FILE *input, struct BFOptions *options) {
     BFStream_free(stream);
 
     struct BFTree *tree = malloc(sizeof(struct BFTree));
-    BFTree_init(tree, START_TOKEN, START_OPCODE);
+    BFTree_init(tree, START_TOKEN, START_OPCODE, 1);
     BFParser_run(tree, list->next);
     BFList_free(list);
 
@@ -92,6 +92,7 @@ static void bf(FILE *input, struct BFOptions *options) {
 
 int main(int argc, char *argv[]) {
     FILE *input = stdin;
+    input = fopen("../examples/hanoi.b", "rb");
 
     struct BFOptions options;
     options.memorySize = DEFAULT_MEMORY_SIZE;

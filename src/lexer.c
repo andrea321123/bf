@@ -83,6 +83,36 @@ static void checkValidProgram(struct BFList *list) {
     }
 }
 
+/* Perform optimizations on generated list.
+ * The only optimization actually used is to join together multiple
+ * instructions of the same type into a single list element
+ * (the number of instructions are specified by the [count] field).
+ */
+static void optimize(struct BFList *list) {
+    while (list->value != END_TOKEN) {
+        if (list->value == INC_POINTER_TOKEN ||
+            list->value == DEC_POINTER_TOKEN ||
+            list->value == INC_VALUE_TOKEN ||
+            list->value == DEC_VALUE_TOKEN
+        ) {
+            enum Token token = list->value;
+            struct BFList *tmp = list->next;
+            while (tmp->value == token && list->count < UINT8_MAX) {
+                /* Free [tmp] node */
+                list->next = tmp->next;
+                tmp->next = NULL;
+                BFList_free(tmp);
+
+                /* Update [tmp] node and list count */
+                tmp = list->next;
+                list->count++;
+            }
+        }
+
+        list = list->next;
+    }
+}
+
 void BFLexer_run(struct BFList *head, struct BFStream *stream) {
     size_t line = 1;
     size_t column = 1;
@@ -113,4 +143,5 @@ void BFLexer_run(struct BFList *head, struct BFStream *stream) {
     BFList_addNext(lastNode, eofNode);
 
     checkValidProgram(head);
+    optimize(head);
 }

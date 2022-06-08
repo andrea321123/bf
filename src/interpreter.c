@@ -53,30 +53,27 @@ static void outOfBounds() {
 
 static void runNonLoopInstruction(
     struct Interpreter *interpreter,
-    enum Token token
+    enum Token token,
+    uint8_t count
 ) {
     int input;
 
     switch (token) {
     case INC_POINTER_TOKEN:
-        interpreter->ptr++;
+        interpreter->ptr += count;
         if (interpreter->ptr >= interpreter->memorySize)
             outOfBounds();
         break;
     case DEC_POINTER_TOKEN:
-        if (interpreter->ptr < 1)
+        if (interpreter->ptr < count)
             outOfBounds();
-        interpreter->ptr--;
+        interpreter->ptr -= count;
         break;
     case INC_VALUE_TOKEN:
-        interpreter->memory[interpreter->ptr] = 
-            (interpreter->memory[interpreter->ptr] +1) %256;
+        interpreter->memory[interpreter->ptr] += count;
         break;
     case DEC_VALUE_TOKEN:
-        if (interpreter->memory[interpreter->ptr] == 0)
-            interpreter->memory[interpreter->ptr] = 255;
-        else
-            interpreter->memory[interpreter->ptr]--;
+        interpreter->memory[interpreter->ptr] -= count;
         break;
     case PUTCHAR_TOKEN:
         putchar(interpreter->memory[interpreter->ptr]);
@@ -101,7 +98,7 @@ static void runRecursive(
 ) {
     while (tree && tree->value != END_TOKEN) {
         if (tree->value != START_LOOP_TOKEN) {
-            runNonLoopInstruction(interpreter, tree->value);
+            runNonLoopInstruction(interpreter, tree->value, tree->count);
         } else {
             while (interpreter->memory[interpreter->ptr] != 0)
                 runRecursive(interpreter, tree->child->pair);

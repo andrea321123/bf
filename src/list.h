@@ -22,6 +22,7 @@
 #include "common.h"
 
 #include <stddef.h>
+#include <stdint.h>
 
 /* Linked list implementation used to store each
  * bf instruction into a sequential data structure.
@@ -31,6 +32,13 @@ struct BFList {
     size_t line;
     size_t column;
     char opcode;
+
+    /* Initially set to 1, shows how many times the same opcode is repeated.
+     * This is used only for > < + - instructions.
+     * It allows faster code execution (a single add instruction instead
+     * of multiple increment instructions, for instance).
+     */
+    uint8_t count;
 
     enum Token value;
     struct BFList *next;

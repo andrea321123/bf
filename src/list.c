@@ -34,6 +34,7 @@ void BFList_init(
     self->line = line;
     self->column = column;
     self->opcode = opcode;
+    self->count = 1;
     self->value = value;
     self->next = NULL;
 }
@@ -51,7 +52,13 @@ void BFList_addNext(struct BFList *self, struct BFList *next) {
 
 void BFList_info(struct BFList *self) {
     while (self) {
-        printf("%c at %zu, %zu\n", self->opcode, self->line, self->column);
+        printf(
+            "(opcode: %c, count: %hhu)  at %zu, %zu\n",
+            self->opcode,
+            self->count
+            ,self->line,
+            self->column
+        );
         self = self->next;
     }
 }

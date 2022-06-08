@@ -21,6 +21,8 @@
 
 #include "common.h"
 
+#include <stdint.h>
+
 /*
  * Data structure used for easy manipulation and interpretation of BF programs.
  * It is a binary tree, where the "left child" stores the first instruction of
@@ -40,12 +42,18 @@
 struct BFTree {
     char opcode;
     enum Token value;
+    uint8_t count;
 
     struct BFTree *child;
     struct BFTree *pair;
 };
 
-void BFTree_init(struct BFTree *self, enum Token token, char opcode);
+void BFTree_init(
+    struct BFTree *self,
+    enum Token token,
+    char opcode,
+    uint8_t count
+);
 
 void BFTree_free(struct BFTree *self);
 

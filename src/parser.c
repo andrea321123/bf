@@ -34,14 +34,14 @@ static struct BFList *parseRecursive(
     while (list->value != stopToken) {
         /* Append every instruction to the pairs */
         struct BFTree *tmp = malloc(sizeof(struct BFTree));
-        BFTree_init(tmp, list->value, list->opcode); 
+        BFTree_init(tmp, list->value, list->opcode, list->count);
         BFTree_addPair(lastPair, tmp);
         lastPair = tmp;
 
         /* Eventually add all nested instruction to the children section */
         if (lastPair->value == START_LOOP_TOKEN) {
             struct BFTree *child = malloc(sizeof(struct BFTree));
-            BFTree_init(child, START_TOKEN, 'S');
+            BFTree_init(child, START_TOKEN, 'S', 1);
             list = parseRecursive(child, list->next, END_LOOP_TOKEN);
             BFTree_addChild(lastPair, child);
         }

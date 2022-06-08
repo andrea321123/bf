@@ -31,7 +31,7 @@ static void printTreeRecursive(struct BFTree *tree, size_t depth) {
     /* We first print [tree] data, then children data (at higher depth),
      * then pairs data.
      */
-    printf("%c\n", tree->opcode);
+    printf("(%c, %hhu)\n", tree->opcode, tree->count);
 
     if (tree->child)
         printTreeRecursive(tree->child, depth +1);
@@ -39,9 +39,15 @@ static void printTreeRecursive(struct BFTree *tree, size_t depth) {
         printTreeRecursive(tree->pair, depth);
 }
 
-void BFTree_init(struct BFTree *self, enum Token token, char opcode) {
+void BFTree_init(
+    struct BFTree *self,
+    enum Token token,
+    char opcode,
+    uint8_t count
+) {
     self->opcode = opcode;
     self->value = token;
+    self->count = count;
     self->pair = NULL;
     self->child = NULL;
 }

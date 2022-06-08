@@ -26,11 +26,14 @@
 
 #define TAB_SIZE 2
 
-static void addLine(char *line, size_t depth) {
+static void printTabs(size_t depth) {
     for (size_t i = 0; i < depth; i++)
         for (size_t j = 0; j < TAB_SIZE; j++)
             putchar(' ');
-    
+}
+
+static void addLine(char *line, size_t depth) {
+    printTabs(depth);
     puts(line);
 }
 
@@ -38,16 +41,20 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
     while (tree) {
         switch (tree->value) {
         case INC_POINTER_TOKEN:
-            addLine("incPtr();", depth);
+            printTabs(depth);
+            printf("incPtr(%hhu);\n", tree->count);
             break;
         case DEC_POINTER_TOKEN:
-            addLine("decPtr();", depth);
+            printTabs(depth);
+            printf("decPtr(%hhu);\n", tree->count);
             break;
         case INC_VALUE_TOKEN:
-            addLine("mem[ptr]++;", depth);
+            printTabs(depth);
+            printf("mem[ptr] += %hhu;\n", tree->count);
             break;
         case DEC_VALUE_TOKEN:
-            addLine("mem[ptr]--;", depth);
+            printTabs(depth);
+            printf("mem[ptr] -= %hhu;\n", tree->count);
             break;
         case PUTCHAR_TOKEN:
             addLine("putchar((uint8_t)mem[ptr]);", depth);
@@ -94,17 +101,17 @@ void BFTranspiler_run(struct BFTree *tree, size_t memorySize) {
     addLine("}", 0);
     addLine("", 0);
 
-    addLine("static inline void incPtr() {", 0);
+    addLine("static inline void incPtr(uint8_t n) {", 0);
+    addLine("ptr += n;", 1);
     addLine("if (ptr >= MEM_SIZE)", 1);
     addLine("outOfBounds();", 2);
-    addLine("ptr++;", 1);
     addLine("}", 0);
     addLine("", 0);
 
-    addLine("static inline void decPtr() {", 0);
-    addLine("if (ptr < 1)", 1);
+    addLine("static inline void decPtr(uint8_t n) {", 0);
+    addLine("if (ptr < n)", 1);
     addLine("outOfBounds();", 2);
-    addLine("ptr--;", 1);
+    addLine("ptr -= n;", 1);
     addLine("}", 0);
     addLine("", 0);
 
