@@ -35,6 +35,9 @@
 
 #define DEFAULT_MEMORY_SIZE 30000
 
+#define VERSION "1.0.0"
+#define REPO_LINK "https://www.github.com/andrea321123/bf.git"
+
 enum Token {
     START_TOKEN,
     END_TOKEN,

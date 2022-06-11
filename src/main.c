@@ -47,7 +47,8 @@ static void showUsageAndExit() {
 }
 
 static void showVersionAndExit() {
-    puts("bf 1.0.0");
+    printf("bf %s\n", VERSION);
+    printf("%s\n", REPO_LINK);
     puts("Copyright (C) 2022 bf contributors");
 
     exit(0);
