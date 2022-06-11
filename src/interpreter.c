@@ -49,6 +49,26 @@ static void outOfBounds() {
     exit(1);
 }
 
+static void incPointer(struct Interpreter *interpreter, uint8_t count) {
+    interpreter->ptr += count;
+    if (interpreter->ptr >= interpreter->memorySize)
+        outOfBounds();
+}
+
+static void decPointer(struct Interpreter *interpreter, uint8_t count) {
+    if (interpreter->ptr < count)
+        outOfBounds();
+    interpreter->ptr -= count;
+}
+
+static void incValue(struct Interpreter *interpreter, uint8_t count) {
+    interpreter->memory[interpreter->ptr] += count;
+}
+
+static void decValue(struct Interpreter *interpreter, uint8_t count) {
+    interpreter->memory[interpreter->ptr] -= count;
+}
+
 static void runNonLoopInstruction(
     struct Interpreter *interpreter,
     enum Token token,
@@ -58,20 +78,16 @@ static void runNonLoopInstruction(
 
     switch (token) {
     case INC_POINTER_TOKEN:
-        interpreter->ptr += count;
-        if (interpreter->ptr >= interpreter->memorySize)
-            outOfBounds();
+        incPointer(interpreter, count);
         break;
     case DEC_POINTER_TOKEN:
-        if (interpreter->ptr < count)
-            outOfBounds();
-        interpreter->ptr -= count;
+        decPointer(interpreter, count);
         break;
     case INC_VALUE_TOKEN:
-        interpreter->memory[interpreter->ptr] += count;
+        incValue(interpreter, count);
         break;
     case DEC_VALUE_TOKEN:
-        interpreter->memory[interpreter->ptr] -= count;
+        decValue(interpreter, count);
         break;
     case PUTCHAR_TOKEN:
         putchar(interpreter->memory[interpreter->ptr]);

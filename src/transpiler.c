@@ -50,21 +50,17 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
             break;
         case INC_VALUE_TOKEN:
             printTabs(depth);
-            printf("mem[ptr] += %hhu;\n", tree->count);
+            printf("incValue(%hhu);\n", tree->count);
             break;
         case DEC_VALUE_TOKEN:
             printTabs(depth);
-            printf("mem[ptr] -= %hhu;\n", tree->count);
+            printf("decValue(%hhu);\n", tree->count);
             break;
         case PUTCHAR_TOKEN:
-            addLine("putchar((uint8_t)mem[ptr]);", depth);
+            addLine("putcharInstruction();", depth);
             break;
         case GETCHAR_TOKEN:
-            addLine("input = getchar();", depth);
-            addLine("if (input != EOF)", depth);
-            addLine("mem[ptr] = (uint8_t)input;", depth +1);
-                addLine("else", depth);
-            addLine("mem[ptr] = 0;", depth);
+            addLine("getcharInstruction();", depth);
             break;
         case START_LOOP_TOKEN:
             addLine("while (mem[ptr]) {", depth);
@@ -79,22 +75,7 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
     }
 }
 
-void BFTranspiler_run(struct BFTree *tree, size_t memorySize) {
-    /* Headers and defines */
-    addLine("#include <stddef.h>", 0);
-    addLine("#include <stdint.h>", 0);
-    addLine("#include <stdio.h>", 0);
-    addLine("#include <stdlib.h>", 0);
-    addLine("", 0);
-    printf("#define MEM_SIZE %zu\n", memorySize);
-    addLine("", 0);
-
-    /* Global variables */
-    addLine("int input;", 0);
-    addLine("size_t ptr = 0;", 0);
-    addLine("", 0);
-
-    /* Local functions */
+static void printLocalFunctions() {
     addLine("static void outOfBounds() {", 0);
     addLine("fprintf(stderr, \"error: memory pointer out of bounds\\n\");", 1);
     addLine("exit(1);", 1);
@@ -115,9 +96,51 @@ void BFTranspiler_run(struct BFTree *tree, size_t memorySize) {
     addLine("}", 0);
     addLine("", 0);
 
+    addLine("static inline void incValue(uint8_t n) {", 0);
+    addLine("mem[ptr] += n;", 1);
+    addLine("}", 0);
+    addLine("", 0);
+
+    addLine("static inline void decValue(uint8_t n) {", 0);
+    addLine("mem[ptr] -= n;", 1);
+    addLine("}", 0);
+    addLine("", 0);
+
+    addLine("static inline void getcharInstruction() {", 0);
+    addLine("int input = getchar();", 1);
+    addLine("if (input != EOF)", 1);
+    addLine("mem[ptr] = (uint8_t)input;", 2);
+    addLine("else", 1);
+    addLine("mem[ptr] = 0;", 2);
+    addLine("}", 0);
+    addLine("", 0);
+
+    addLine("static inline void putcharInstruction() {", 0);
+    addLine("putchar((uint8_t)mem[ptr]);", 1);
+    addLine("}", 0);
+    addLine("", 0);
+}
+
+void BFTranspiler_run(struct BFTree *tree, size_t memorySize) {
+    /* Headers and defines */
+    addLine("#include <stddef.h>", 0);
+    addLine("#include <stdint.h>", 0);
+    addLine("#include <stdio.h>", 0);
+    addLine("#include <stdlib.h>", 0);
+    addLine("", 0);
+    printf("#define MEM_SIZE %zu\n", memorySize);
+    addLine("", 0);
+
+    /* Global variables */
+    addLine("size_t ptr = 0;", 0);
+    addLine("uint8_t *mem = NULL;", 0);
+    addLine("", 0);
+
+    printLocalFunctions();
+
     /* Main function */
     addLine("int main(int argc, char *argv[]) {", 0);
-    addLine("uint8_t *mem = calloc(MEM_SIZE, sizeof(uint8_t));", 1);
+    addLine("mem = calloc(MEM_SIZE, sizeof(uint8_t));", 1);
     addLine("", 0);
 
     transpileRecursive(tree, 1);
