@@ -75,6 +75,41 @@ static void transpileRecursive(struct BFTree *tree, size_t depth) {
     }
 }
 
+static void printMacros() {
+    addLine("#define incPtr(n) \\", 0);
+    addLine("ptr += n; \\", 1);
+    addLine("if (ptr >= MEM_SIZE) \\", 1);
+    addLine("outOfBounds();", 2);
+    addLine("", 0);
+
+    addLine("#define decPtr(n) \\", 0);
+    addLine("if (ptr < n) \\", 1);
+    addLine("outOfBounds(); \\", 2);
+    addLine("ptr -= n;", 1);
+    addLine("", 0);
+
+    addLine("#define incValue(n) \\", 0);
+    addLine("mem[ptr] += n;", 1);
+    addLine("", 0);
+
+    addLine("#define decValue(n) \\", 0);
+    addLine("mem[ptr] -= n;", 1);
+    addLine("", 0);
+
+    addLine("#define getcharInstruction() \\", 0);
+    addLine("int input = getchar(); \\", 1);
+    addLine("if (input != EOF) \\", 1);
+    addLine("mem[ptr] = (uint8_t)input; \\", 2);
+    addLine("else \\", 1);
+    addLine("mem[ptr] = 0;", 2);
+    addLine("", 0);
+
+    addLine("#define putcharInstruction() \\", 0);
+    addLine("putchar((uint8_t)mem[ptr]);", 1);
+    addLine("", 0);
+
+}
+
 static void printLocalFunctions() {
     addLine("static void outOfBounds() {", 0);
     addLine("fprintf(stderr, \"error: memory pointer out of bounds\\n\");", 1);
@@ -82,43 +117,6 @@ static void printLocalFunctions() {
     addLine("}", 0);
     addLine("", 0);
 
-    addLine("static inline void incPtr(uint8_t n) {", 0);
-    addLine("ptr += n;", 1);
-    addLine("if (ptr >= MEM_SIZE)", 1);
-    addLine("outOfBounds();", 2);
-    addLine("}", 0);
-    addLine("", 0);
-
-    addLine("static inline void decPtr(uint8_t n) {", 0);
-    addLine("if (ptr < n)", 1);
-    addLine("outOfBounds();", 2);
-    addLine("ptr -= n;", 1);
-    addLine("}", 0);
-    addLine("", 0);
-
-    addLine("static inline void incValue(uint8_t n) {", 0);
-    addLine("mem[ptr] += n;", 1);
-    addLine("}", 0);
-    addLine("", 0);
-
-    addLine("static inline void decValue(uint8_t n) {", 0);
-    addLine("mem[ptr] -= n;", 1);
-    addLine("}", 0);
-    addLine("", 0);
-
-    addLine("static inline void getcharInstruction() {", 0);
-    addLine("int input = getchar();", 1);
-    addLine("if (input != EOF)", 1);
-    addLine("mem[ptr] = (uint8_t)input;", 2);
-    addLine("else", 1);
-    addLine("mem[ptr] = 0;", 2);
-    addLine("}", 0);
-    addLine("", 0);
-
-    addLine("static inline void putcharInstruction() {", 0);
-    addLine("putchar((uint8_t)mem[ptr]);", 1);
-    addLine("}", 0);
-    addLine("", 0);
 }
 
 void BFTranspiler_run(struct BFTree *tree, size_t memorySize) {
@@ -134,6 +132,8 @@ void BFTranspiler_run(struct BFTree *tree, size_t memorySize) {
     addLine("", 0);
     printf("#define MEM_SIZE %zu\n", memorySize);
     addLine("", 0);
+
+    printMacros();
 
     /* Global variables */
     addLine("size_t ptr = 0;", 0);
