@@ -38,6 +38,8 @@ static void showUsageAndExit() {
     puts("");
     puts("  -r, --run           run bf source program (default behaviour)");
     puts("  -t, --transpile     transpile bf source to a C source file");
+    puts("  -f, --fast          does not check memory underflow or overflow.");
+    puts("                        Faster execution, but the program may crash");
     puts("  -m MEMORY           specify the memory array size (default 30000)");
     puts("");
     puts("    -h, --help        display this help and exit");
@@ -85,9 +87,9 @@ static void bf(FILE *input, struct BFOptions *options) {
     BFList_free(list);
 
     if (options->transpile)
-        BFTranspiler_run(tree, options->memorySize);
+        BFTranspiler_run(tree, options);
     else
-        BFInterpreter_run(tree, options->memorySize);
+        BFInterpreter_run(tree, options);
     BFTree_free(tree);
 }
 
@@ -97,6 +99,7 @@ int main(int argc, char *argv[]) {
     struct BFOptions options;
     options.memorySize = DEFAULT_MEMORY_SIZE;
     options.transpile = 0;
+    options.fast = 0;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
@@ -107,6 +110,8 @@ int main(int argc, char *argv[]) {
             options.transpile = 1;
         } else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--run") == 0) {
             options.transpile = 0;
+        } else if (strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "--fast") == 0) {
+            options.fast = 1;
         } else if (strcmp(argv[i], "-m") == 0) {
             i++;
             if (i == argc) {

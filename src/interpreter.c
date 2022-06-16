@@ -30,19 +30,13 @@ struct Interpreter {
     uint8_t *memory;
     size_t ptr;
     size_t memorySize;
+
+    /* Function pointers to brainfuck instructions.
+     * When using --flag option, we can use optimized instructions.
+     */
+    void (*intPointerFn)(struct Interpreter *, uint8_t);
+    void (*decPointerFn)(struct Interpreter *, uint8_t);
 };
-
-static void Interpreter_init(struct Interpreter *self, size_t memorySize) {
-    self->memorySize = memorySize;
-    self->memory = calloc(memorySize, 1);
-
-    self->ptr = 0;
-}
-
-static void Interpreter_free(struct Interpreter *self) {
-    free(self->memory);
-    free(self);
-}
 
 static void outOfBounds() {
     fprintf(stderr, "error: memory pointer out of bounds\n");
@@ -55,9 +49,17 @@ static void incPointer(struct Interpreter *interpreter, uint8_t count) {
         outOfBounds();
 }
 
+static void incPointerFast(struct Interpreter *interpreter, uint8_t count) {
+    interpreter->ptr += count;
+}
+
 static void decPointer(struct Interpreter *interpreter, uint8_t count) {
     if (interpreter->ptr < count)
         outOfBounds();
+    interpreter->ptr -= count;
+}
+
+static void decPointerFast(struct Interpreter *interpreter, uint8_t count) {
     interpreter->ptr -= count;
 }
 
@@ -69,6 +71,30 @@ static void decValue(struct Interpreter *interpreter, uint8_t count) {
     interpreter->memory[interpreter->ptr] -= count;
 }
 
+static void Interpreter_init(
+    struct Interpreter *self,
+    struct BFOptions *options
+) {
+    self->memorySize = options->memorySize;
+    self->memory = calloc(self->memorySize, 1);
+
+    if (options->fast) {
+        self->intPointerFn = &incPointerFast;
+        self->decPointerFn = &decPointerFast;
+    } else {
+        self->intPointerFn = &incPointer;
+        self->decPointerFn = &decPointer;
+    }
+
+    self->ptr = 0;
+}
+
+static void Interpreter_free(struct Interpreter *self) {
+    free(self->memory);
+    free(self);
+}
+
+
 static void runNonLoopInstruction(
     struct Interpreter *interpreter,
     enum Token token,
@@ -78,10 +104,10 @@ static void runNonLoopInstruction(
 
     switch (token) {
     case INC_POINTER_TOKEN:
-        incPointer(interpreter, count);
+        (*interpreter->intPointerFn)(interpreter, count);
         break;
     case DEC_POINTER_TOKEN:
-        decPointer(interpreter, count);
+        (*interpreter->decPointerFn)(interpreter, count);
         break;
     case INC_VALUE_TOKEN:
         incValue(interpreter, count);
@@ -121,9 +147,9 @@ static void runRecursive(
     }
 }
 
-void BFInterpreter_run(struct BFTree *tree, size_t memorySize) {
+void BFInterpreter_run(struct BFTree *tree, struct BFOptions *options) {
     struct Interpreter *interpreter = malloc(sizeof(struct Interpreter));
-    Interpreter_init(interpreter, (size_t)memorySize);
+    Interpreter_init(interpreter, options);
 
     runRecursive(interpreter, tree);
 

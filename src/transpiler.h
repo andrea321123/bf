@@ -19,11 +19,10 @@
 #ifndef TRANSPILER_H
 #define TRANSPILER_H
 
+#include "common.h"
 #include "tree.h"
 
-#include <stddef.h>
-
 /* Compile the BF program represented by [tree] into a C source file */
-void BFTranspiler_run(struct BFTree *tree, size_t memorySize);
+void BFTranspiler_run(struct BFTree *tree, struct BFOptions *options);
 
 #endif 

@@ -19,11 +19,10 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
+#include "common.h"
 #include "tree.h"
 
-#include <stddef.h>
-
 /* Run the BF program represented by [tree] */
-void BFInterpreter_run(struct BFTree *tree, size_t memorySize);
+void BFInterpreter_run(struct BFTree *tree, struct BFOptions *options);
 
 #endif 

@@ -57,6 +57,7 @@ enum Token {
 struct BFOptions {
     size_t memorySize;
     int transpile;
+    int fast;
 };
 
 #endif
